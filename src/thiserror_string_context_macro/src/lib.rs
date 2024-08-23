@@ -46,14 +46,17 @@ pub fn string_context(attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut variants = input_enum.variants;
     variants.push(new_variant);
 
+    let attrs = input_enum.attrs;
+
     // Generate the modified enum with the new variant
     let output = quote! {
-        #[derive(Error, Debug)]
+        //#[derive(Error, Debug)]
+        #(#attrs)*
         #visibility enum #enum_name {
             #variants
         }
 
-        impl<T, E> AddErrorContext<T, #enum_name> for std::result::Result<T, E>
+        impl<E,T> AddErrorContext<#enum_name, T> for std::result::Result<T, E>
         where
             E: Into<#enum_name>,
         {

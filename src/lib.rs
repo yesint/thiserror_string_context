@@ -2,7 +2,7 @@
 
 pub use thiserror_string_context_macro::string_context;
 
-pub trait AddErrorContext<T,E> {
+pub trait AddErrorContext<E,T> {
     fn with_context<'a>(self, f: impl FnOnce()->&'a str) -> std::result::Result<T, E>;
 }
 
@@ -33,10 +33,10 @@ mod tests {
     }
 
     #[test]
-    fn test1() -> anyhow::Result<()> {
-        callme(42)?;
-        callme(1).with_context(|| "Crashing with value 1")?;
-        Ok(())
+    #[should_panic]
+    fn test1() {
+        callme(42).unwrap();
+        callme(1).with_context(|| "Crashing with value 1").unwrap();
     }
 
 
