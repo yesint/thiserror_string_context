@@ -1,16 +1,13 @@
 [package]
 name = "thiserror_string_context_macro"
 version = "0.1.0"
-edition = "2021"
-
-license = "MIT OR Apache-2.0"
+edition.workspace = true
+license.workspace = true
 description = "Macro crate for thiserror_string_context"
-#homepage.workspace = true
-repository = "https://github.com/yesint/thiserror_string_context"
-documentation = "https://docs.rs/thiserror_string_context"
-keywords = ["thiserror", "context", "string"]
-categories = ["development-tools","rust-patterns"]
-
+repository.workspace = true
+documentation.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [dependencies]
 syn = {version="2.0", features = ["full"]}

@@ -1,16 +1,23 @@
-[package]
-name = "thiserror_string_context"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
+[workspace.package]
+edition = "2021"
 license = "MIT OR Apache-2.0"
-description = "Adds context string to error enums generated with thiserror"
 #homepage.workspace = true
 repository = "https://github.com/yesint/thiserror_string_context"
 documentation = "https://docs.rs/thiserror_string_context"
 readme = "README.md"
 keywords = ["thiserror", "context", "string"]
 categories = ["development-tools","rust-patterns"]
+
+[package]
+name = "thiserror_string_context"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Adds context string to error enums generated with thiserror"
+repository.workspace = true
+documentation.workspace = true
 
 [dependencies]
 thiserror_string_context_macro = {version="0.1", path="src/thiserror_string_context_macro"}
