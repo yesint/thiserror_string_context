@@ -56,6 +56,15 @@ pub fn string_context(attr: TokenStream, item: TokenStream) -> TokenStream {
             #variants
         }
 
+        impl #enum_name {
+            pub fn unwrap_context(self) -> (Option<String>,Self) {
+                match self {
+                    Self::__WithContext(ctx,err) => (Some(ctx),*err),
+                    _ => (None,self),
+                }
+            }
+        }
+
         impl<E,T> AddErrorContext<#enum_name, T> for std::result::Result<T, E>
         where
             E: Into<#enum_name>,

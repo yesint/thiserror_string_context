@@ -9,47 +9,68 @@ In contrast to the other crate with similar purpose - [thiserror-context](https:
 
 # Usage
 The usage is very simple:
- ```ignore
+ ```should_panic
 use thiserror::Error;
 use thiserror_string_context::*;
+
 // Annotate your error enum with `string_context` attribute.
 // This will allow to use `MyError::with_context()` method
 // to add a string annotation to your errors.
 // You may add a custom error message where `{0}` 
 // is your original error variant.
-#[thiserror_context("Custom context messag: {0}")]
+#[string_context("Custom context message: {0}")]
 #[derive(Error,Debug)]
 enum MyError {
-    #[error("Error 1")]
-    Error1,
-    #[error("Error 2")]
-    Error2,
-    #[error("Error 3")]
-    Error3,
+    #[error("Slight underflow happened!")]
+    Underflow,
+    #[error("slight overflow happened!")]
+    Overflow,
+    #[error("too far from correct!")]
+    TooFar,
 }
  
-fn callme(n: i32) -> Result<(),MyError> {
+fn check_number(n: i32) -> Result<(),MyError> {
     match n {
-        42 => println!("Nice number!"),
-        1 => return Err(MyError::Error1),
-        2 => return Err(MyError::Error2),
-        _ => return Err(MyError::Error3),
+        42 => println!("Correct number!"),
+        41 => return Err(MyError::Underflow),
+        43 => return Err(MyError::Overflow),
+        _ => return Err(MyError::TooFar),
     }
     Ok(())
 }
 
-fn main() -> anyhow::Result<()> {
-    callme(42)?;
+fn initiate_error() -> anyhow::Result<()> {
     // Here we add a context message
-    callme(1).with_context(|| "Crashing with value 1")?;
+    check_number(41).with_context(|| "Crashing with value 41")?;
     Ok(())
 }
+
+# fn main() {
+#     initiate_error().unwrap();
+# }
 ```
 This crashes with the following message:
 ```text
-Nice number!
-Error: Custom context message: Crashing with value 1
+Custom context message: Crashing with value 41
 
 Caused by:
-   Error 1
+    Slight underflow happened!
+```
+
+# Matching on error enums with context
+When the context is added to the error enum a hidden variant is added to it, which makes matching on enum variants somewhat tedious. The method `unwrap_context` retuns a tuple where the first element is `Option<String>` containing the context (if there is any) and the second is the enum itself "peeled" from the context. This allows very simple matching:
+```ignore
+if let Err(err) = initiate_error() {
+    // Run different actions on different error variants
+    match err.unwrap_context() {
+        // Different actions could be performed on the same
+        // variant with and without the context
+        (Some(ctx),MyError::Underflow) => {...},
+        (None,MyError::Underflow) => {...},
+        // The context could be ignored
+        (_,MyError::Overflow) => {...},
+        // The wildcard pattern is required
+        _ => {...},
+    }
+}
 ```
