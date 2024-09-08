@@ -2,8 +2,8 @@
 
 pub use thiserror_string_context_macro::string_context;
 
-pub trait AddErrorContext<E,T> {
-    fn with_context<'a>(self, f: impl FnOnce()->&'a str) -> std::result::Result<T, E>;
+pub trait AddErrorContext<E,T,S> {
+    fn with_context(self, f: impl FnOnce()->S) -> std::result::Result<T, E>;
 }
 
 #[cfg(test)]

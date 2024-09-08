@@ -65,11 +65,12 @@ pub fn string_context(attr: TokenStream, item: TokenStream) -> TokenStream {
             }
         }
 
-        impl<E,T> AddErrorContext<#enum_name, T> for std::result::Result<T, E>
+        impl<E,T,S> AddErrorContext<#enum_name, T,S> for std::result::Result<T, E>
         where
             E: Into<#enum_name>,
+            S: Into<String>,
         {
-            fn with_context<'a>(self, f: impl FnOnce() -> &'a str) -> std::result::Result<T, #enum_name> {
+            fn with_context(self, f: impl FnOnce() -> S) -> std::result::Result<T, #enum_name> {
                 self.map_err(|e| #enum_name::__WithContext(f().into(), Box::new(e.into())))
             }
         }
